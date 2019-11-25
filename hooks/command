@@ -8,7 +8,8 @@ basedir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
 
 echo "--- Sending Hangouts Message"
 
-CHAT_URL=${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_WEBHOOK_URL?}
+WEBHOOK_URL=${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_WEBHOOK_URL?}
+CHAT_URL=${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_CHAT_ENDPOINT?}
 MESSAGE=${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_MESSAGE?}
 
 if [[ "${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_DEBUG:-false}" =~ (true|on|1) ]] ; then
@@ -25,13 +26,20 @@ if [[ "${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_COMMIT_SUMMARY_ENABLED:-false}" =~ (tr
     MESSAGE="${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_MESSAGE} ${SUMMARY_LOG}"
 fi
 
-
 CURRENT_COMMIT=$(git rev-parse HEAD)
 THREAD_KEY=${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_THREAD_KEY:=$CURRENT_COMMIT}
 
+# # Post to Chat Service Endpoint
+# curl -X POST \
+#      -H "Content-Type: application/json" \
+#      --data "$MESSAGE" \
+#      "${WEBHOOK_URL}&threadKey=${THREAD_KEY}"
 
-# Post to Chat Service Endpoint
-curl -X POST \
-     -H "Content-Type: application/json" \
-     --data "$MESSAGE" \
-     "${CHAT_URL}&threadKey=${THREAD_KEY}"
+## Request
+curl -X "POST" "${CHAT_URL}" \
+     -H 'Content-Type: text/plain; charset=utf-8' \
+     -d $'{ "webhook": '"${WEBHOOK_URL}"',
+"threadkey":'"${THREAD_KEY}"',
+"message":'"${MESSAGE}"'
+}
+'
