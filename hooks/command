@@ -1,0 +1,37 @@
+#!/bin/bash
+set -euo pipefail
+
+# Set Base Working Directory 
+basedir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
+
+. "$basedir/lib/commit_summary.bash"
+
+echo "--- Sending Hangouts Message"
+
+CHAT_URL=${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_WEBHOOK_URL?}
+MESSAGE=${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_MESSAGE?}
+
+if [[ "${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_DEBUG:-false}" =~ (true|on|1) ]] ; then
+  echo "--- :hammer: Enabling debug mode"
+  set -x
+fi
+
+if [[ "${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_COMMIT_SUMMARY_ENABLED:-false}" =~ (true|on|1) ]] ; then
+    # Generate Commit based message
+    local BK_FROM_COMMIT="${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_COMMIT_SUMMARY_FROM_COMMIT}"
+    local BK_TO_COMMIT="${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_COMMIT_SUMMARY_TO_COMMIT}"
+    SUMMARY_LOG=$(commit_summary "$BK_FROM_COMMIT" "$BK_TO_COMMIT")
+
+    MESSAGE="${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_MESSAGE} ${SUMMARY_LOG}"
+fi
+
+
+CURRENT_COMMIT=$(git rev-parse HEAD)
+THREAD_KEY=${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_THREAD_KEY:=$CURRENT_COMMIT}
+
+
+# Post to Chat Service Endpoint
+curl -X POST \
+     -H "Content-Type: application/json" \
+     --data "$MESSAGE" \
+     "${CHAT_URL}&threadKey=${THREAD_KEY}"
