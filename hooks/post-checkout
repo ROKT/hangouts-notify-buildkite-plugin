@@ -2,15 +2,15 @@
 set -euo pipefail
 
 # Set Base Working Directory 
-basedir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
+declare -r basedir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
 
-. "$basedir/lib/commit_summary.bash"
+. "${basedir}/lib/commit_summary.bash"
 
 echo "--- Sending Hangouts Message"
 
-WEBHOOK_URL="${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_WEBHOOK_URL?}"
-CHAT_URL=${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_CHAT_ENDPOINT?}
-MESSAGE="${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_MESSAGE?}"
+declare -r WEBHOOK_URL="${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_WEBHOOK_URL?}"
+declare -r CHAT_URL="${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_CHAT_ENDPOINT?}"
+declare -r MESSAGE="${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_MESSAGE?}"
 
 if [[ "${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_DEBUG:-false}" =~ (true|on|1) ]] ; then
   echo "--- :hammer: Enabling debug mode"
@@ -19,21 +19,17 @@ fi
 
 if [[ "${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_COMMIT_SUMMARY_ENABLED:-false}" =~ (true|on|1) ]] ; then
     # Generate Commit based message
-    BK_FROM_COMMIT="${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_COMMIT_SUMMARY_FROM_COMMIT}"
-    BK_TO_COMMIT="${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_COMMIT_SUMMARY_TO_COMMIT}"
-    SUMMARY_LOG=$(commit_summary "$BK_FROM_COMMIT" "$BK_TO_COMMIT")
-
-    MESSAGE="${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_MESSAGE} ${SUMMARY_LOG}"
+    declare -r BK_FROM_COMMIT="${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_COMMIT_SUMMARY_FROM_COMMIT}"
+    declare -r BK_TO_COMMIT="${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_COMMIT_SUMMARY_TO_COMMIT}"
+    declare -r SUMMARY_LOG=$(commit_summary "$BK_FROM_COMMIT" "$BK_TO_COMMIT")
+    declare -r MESSAGE="${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_MESSAGE} ${SUMMARY_LOG}"
 fi
 
-CURRENT_COMMIT=$(git rev-parse HEAD)
-THREAD_KEY=${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_THREAD_KEY:=$CURRENT_COMMIT}
+declare -r CURRENT_COMMIT=$(git rev-parse HEAD)
+declare -r THREAD_KEY=${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_THREAD_KEY:=$CURRENT_COMMIT}
 
-# # Post to Chat Service Endpoint
-curl -X "POST" "${CHAT_URL}" \
-     -H 'Content-Type: text/plain; charset=utf-8' \
-     -d $'{ "webhook": "'"${WEBHOOK_URL}"'",
-"threadkey":"'"${THREAD_KEY}"'",
-"message": "'"${MESSAGE}"'"
-}
-'
+python "${basedir}/lib/send_msg.py" \
+    --chat_url "${CHAT_URL}" \
+    --web_hook_url "${WEBHOOK_URL}"\
+    --thread_key "${THREAD_KEY}"\
+    --message "${MESSAGE}"
