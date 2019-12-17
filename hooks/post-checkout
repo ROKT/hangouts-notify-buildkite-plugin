@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-# Set Base Working Directory 
+# Set Base Working Directory
 basedir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
 
 . "$basedir/lib/commit_summary.bash"
@@ -10,7 +10,7 @@ echo "--- Sending Hangouts Message"
 
 WEBHOOK_URL="${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_WEBHOOK_URL?}"
 CHAT_URL=${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_CHAT_ENDPOINT?}
-MESSAGE="${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_MESSAGE?}"
+MESSAGE=$(echo "${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_MESSAGE?}" | envsubst)
 
 if [[ "${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_DEBUG:-false}" =~ (true|on|1) ]] ; then
   echo "--- :hammer: Enabling debug mode"
@@ -23,7 +23,7 @@ if [[ "${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_COMMIT_SUMMARY_ENABLED:-false}" =~ (tr
     BK_TO_COMMIT="${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_COMMIT_SUMMARY_TO_COMMIT}"
     SUMMARY_LOG=$(commit_summary "$BK_FROM_COMMIT" "$BK_TO_COMMIT")
 
-    MESSAGE="${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_MESSAGE} ${SUMMARY_LOG}"
+    MESSAGE="${MESSAGE} ${SUMMARY_LOG}"
 fi
 
 CURRENT_COMMIT=$(git rev-parse HEAD)
