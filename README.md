@@ -51,6 +51,24 @@ steps:
 
   Message that you want to send.
 
+## Hangouts card integration
+
+- To build the webhookURL and allow for different notifications from a "FAIL" user and a "PASS" user
+  'webhook-url2'
+  'webhook-key'
+  'usertoken-pass'
+  'usertoken-fail'
+
+- You will have to pass the 'TYPE' as card, if left empty or doesn't exist, the old way will be used
+  'type: 'CARD''
+
+- Use the following for card title, subtitile and card openLink. Fields are separated by a comma
+  'card-details: <title>, <subtitle, <build link>>'
+
+- Pass in the row DETAILS. Each card has 3 fields separated by a comma. each card is separated by ;
+  'rows: <card1title>, <card1result>, <build link>'
+  OR
+  'rows: <card1title>, <card1result>, <build1 link>; <card2title>, <card2result>, <build2 link>'
 
 ### TODO:
 - Native Google Webhook Endpoint without proxy Endpoint (coming soon)
