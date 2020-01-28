@@ -11,11 +11,17 @@ configuration:
       type: string
     thread-key:
       type: string
+    type:
+      type: string
+    card-details:
+      type: string
+    rows:
+      type: string
     commit-summary:
       type: object
       properties:
         enabled: boolean
-        from-commit: 
+        from-commit:
           type: string
         to-commit:
           type: string
