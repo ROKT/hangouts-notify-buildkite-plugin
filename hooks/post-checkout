@@ -11,6 +11,14 @@ echo "--- Sending Hangouts Message"
 WEBHOOK_URL="${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_WEBHOOK_URL?}"
 CHAT_URL=${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_CHAT_ENDPOINT?}
 MESSAGE=$(echo "${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_MESSAGE?}" | envsubst)
+WEBHOOK_URL2="${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_WEBHOOK_URL2?}"
+WEBHOOK_KEY="${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_WEBHOOK_KEY?}"
+USERTOKEN_FAIL="${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_USERTOKEN_FAIL?}"
+USERTOKEN_PASS="${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_USERTOKEN_PASS?}"
+TYPE=${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_TYPE}
+CARD_DETAILS=${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_CARD_DETAILS}
+ROWS=$(echo "${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_ROWS?}" | envsubst)
+
 
 if [[ "${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_DEBUG:-false}" =~ (true|on|1) ]] ; then
   echo "--- :hammer: Enabling debug mode"
@@ -29,11 +37,47 @@ fi
 CURRENT_COMMIT=$(git rev-parse HEAD)
 THREAD_KEY=${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_THREAD_KEY:=$CURRENT_COMMIT}
 
-# # Post to Chat Service Endpoint
-curl -X "POST" "${CHAT_URL}" \
-     -H 'Content-Type: text/plain; charset=utf-8' \
-     -d $'{ "webhook": "'"${WEBHOOK_URL}"'",
-"threadkey":"'"${THREAD_KEY}"'",
-"message": "'"${MESSAGE}"'"
-}
-'
+FAIL=0
+ROWS_JSON="none"
+if [ $TYPE == 'CARD' ]
+  then
+
+  IFS=, read -r CARD_TITLE CARD_SUBTITLE BUILD_URL <<< "$CARD_DETAILS"
+
+  # Create a list of JSON objects to display the rows in the hangouts card
+  IFS=';' read -ra DETAILS <<< "$ROWS"
+  for i in "${DETAILS[@]}"; do
+      IFS=, read -r ROW_TITLE ROW_INFO ROW_URL <<< "$i"
+      if [ $ROW_INFO == "Failed" ]; then FAIL=1; fi
+      if [ $ROWS_JSON == "none" ]
+          then
+            ROWS_JSON='{ "keyValue":{ "topLabel":"'"$ROW_TITLE"'","content":"'"$ROW_INFO"'","button":{ "textButton":{ "text":"OPEN REPORT","onClick":{ "openLink":{ "url":"'"$ROW_URL"'"}}}}}}'
+          else
+            ROWS_JSON=$ROWS_JSON,'{ "keyValue":{ "topLabel":"'"$ROW_TITLE"'","content":"'"$ROW_INFO"'","button":{ "textButton":{ "text":"OPEN REPORT","onClick":{ "openLink":{ "url":"'"$ROW_URL"'"}}}}}}'
+          fi
+  done
+
+  # Putting the JSON card together for hangouts
+  HANGOUTS_CARD_JSON='{"cards":[{"header":{"title":"'"$CARD_TITLE"'","subtitle":"'"$CARD_SUBTITLE"'"},"sections":[{"widgets":['"$ROWS_JSON"']},{"widgets":[{"buttons":[{"textButton":{"text":"GO TO BUILD","onClick":{"openLink":{"url":"'"$BUILD_URL"'"}}}}]}]}]}]}'
+
+  #Create webhook url based of failed tests or not
+  if [ $FAIL == 1 ]
+    then
+      WEBHOOK_URL="${WEBHOOK_URL2}key=${WEBHOOK_KEY}&token=${USERTOKEN_FAIL}"
+    else
+      WEBHOOK_URL="${WEBHOOK_URL2}key=${WEBHOOK_KEY}&token=${USERTOKEN_PASS}"
+    fi
+  curl -v --location --request POST "${WEBHOOK_URL}" \
+  -H 'Content-Type: application/json' \
+  -d ' '"${HANGOUTS_CARD_JSON}"' '
+
+else
+  curl -v -X "POST" "${CHAT_URL}" \
+       -H 'Content-Type: application' \
+       -d $'{ "webhook": "'"${WEBHOOK_URL}"'",
+  "threadkey":"'"${THREAD_KEY}"'",
+  "message": "'"${MESSAGE}"'"
+  }
+  '
+
+fi
