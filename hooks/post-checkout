@@ -48,7 +48,7 @@ if [ $TYPE == 'CARD' ]
   IFS=';' read -ra DETAILS <<< "$ROWS"
   for i in "${DETAILS[@]}"; do
       IFS=, read -r ROW_TITLE ROW_INFO ROW_URL <<< "$i"
-      if [ $ROW_INFO == "Failed" ]; then FAIL=1; fi
+      if [ $ROW_INFO == "FAILED" ]; then FAIL=1; fi
       if [[ -z "$ROW_URL" ]] || [[ "${ROW_URL}" == "report not available" ]; then ROW_URL=$BUILD_URL; fi
       if [ $ROWS_JSON == "none" ]
           then
