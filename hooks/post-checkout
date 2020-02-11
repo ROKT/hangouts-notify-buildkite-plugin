@@ -58,8 +58,15 @@ if [ $TYPE == 'CARD' ]
           fi
   done
 
+  #Set the header icon
+  HEADER_ICON='https://roktcdn1.akamaized.net/bbw/success.png'
+  if [ $FAIL == 1 ]
+    then
+      HEADER_ICON='https://roktcdn1.akamaized.net/bbw/failure.png'
+    fi
+
   # Putting the JSON card together for hangouts
-  HANGOUTS_CARD_JSON='{"cards":[{"header":{"title":"'"$CARD_TITLE"'","subtitle":"'"$CARD_SUBTITLE"'"},"sections":[{"widgets":['"$ROWS_JSON"']},{"widgets":[{"buttons":[{"textButton":{"text":"GO TO BUILD","onClick":{"openLink":{"url":"'"$BUILD_URL"'"}}}}]}]}]}]}'
+  HANGOUTS_CARD_JSON='{"cards":[{"header":{"title":"'"$CARD_TITLE"'","subtitle":"'"$CARD_SUBTITLE"'","imageUrl":"'"$HEADER_ICON"'"},"sections":[{"widgets":['"$ROWS_JSON"']},{"widgets":[{"buttons":[{"textButton":{"text":"GO TO BUILD","onClick":{"openLink":{"url":"'"$BUILD_URL"'"}}}}]}]}]}]}'
 
   #Create webhook url based of failed tests or not
   if [ $FAIL == 1 ]
