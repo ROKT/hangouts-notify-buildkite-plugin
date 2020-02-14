@@ -1,32 +1,6 @@
 name: Hangouts Notification Plugin
-description: Sends webhooks to Google Hangouts Chat Rooms
+description: Provide commands to send events to Google Hangouts Chat Rooms
 author: https://github.com/rokt
 configuration:
-  properties:
-    chat-endpoint:
-      type: string
-    webhook-url:
-      type: string
-    message:
-      type: string
-    thread-key:
-      type: string
-    type:
-      type: string
-    card-details:
-      type: string
-    rows:
-      type: string
-    commit-summary:
-      type: object
-      properties:
-        enabled: boolean
-        from-commit:
-          type: string
-        to-commit:
-          type: string
-  required:
-    - chat-endpoint
-    - webhook-url
-    - message
+  properties: {}
   additionalProperties: false

@@ -1,0 +1,6 @@
+#!/bin/bash
+set -euo pipefail
+
+basedir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
+
+export PATH="$basedir/bin:$PATH"

@@ -1,0 +1,15 @@
+#!/bin/bash
+set -euo pipefail
+
+cat - <<EOF
+{
+  "textButton": {
+    "text": $(json-string "$1"),
+    "onClick": {
+      "openLink": {
+        "url": $(json-string "$2")
+      }
+    }
+  }
+}
+EOF

@@ -1,0 +1,16 @@
+#!/bin/bash
+set -euo pipefail
+
+from="$1"
+to="$2"
+
+# print out the commits that have been added
+git log --pretty=tformat:'`%h` %s' "$from".."$to"
+
+# print out the commits that have been removed
+removed_commits=$(git log --pretty=tformat:'`%h` %s' "$to".."$from")
+if [ -n "$removed_commits" ]; then
+    echo # one blank line looks a bit nicer
+    echo "Removing commits"
+    echo "$removed_commits"
+fi

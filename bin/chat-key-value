@@ -1,0 +1,12 @@
+#!/bin/bash
+set -euo pipefail
+
+cat - <<EOF
+{
+  "keyValue": {
+    "topLabel": $(json-string "$1"),
+    "content": $(json-string "$2"),
+    "button": $3
+  }
+}
+EOF

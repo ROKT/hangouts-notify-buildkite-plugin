@@ -1,0 +1,8 @@
+#!/bin/bash
+set -euo pipefail
+
+# jq will read from stdin here
+jq --compact-output . \
+    | curl -v --location --request POST "${1}" \
+           -H 'Content-Type: application/json' \
+           -d -
