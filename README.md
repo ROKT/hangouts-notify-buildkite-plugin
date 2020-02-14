@@ -1,6 +1,6 @@
 # Google/GSuite Hangouts Chat Notification Plugin
 
-[![GitHub Release](https://img.shields.io/github/v/release/dawshiek-yogathasar/hangouts-notify-buildkite-plugin.svg)](https://github.com/dawshiek-yogathasar/hangouts-notify-buildkite-plugin/releases)
+[![GitHub Release](https://img.shields.io/github/v/release/ROKT/hangouts-notify-buildkite-plugin.svg)](https://github.com/ROKT/hangouts-notify-buildkite-plugin/releases)
 
 A [Buildkite plugin](https://buildkite.com/docs/agent/v3/plugins) to send notifications from Buildkite to Google Hangouts
 
@@ -19,7 +19,7 @@ steps:
       Sending an awesome msg
       EOF
     plugins:
-      - dawshiek-yogathasar/hangouts-notify#v0.10:
+      - ROKT/hangouts-notify#v0.10:
 ```
 
 [webhooks]: https://developers.google.com/hangouts/chat/quickstart/incoming-bot-python#step_1_register_the_incoming_webhook
@@ -65,7 +65,7 @@ Google Chat also supports more complex messages, made up of widgets arranged int
     }
     EOF
   plugins:
-    - dawshiek-yogathasar/hangouts-notify#v0.10
+    - ROKT/hangouts-notify#v0.10
 ```
 
 More commands for card layouts can be added as the need arises, but you can also use any mechanism you like to generate the necessary JSON for Google Chat to render your message.
