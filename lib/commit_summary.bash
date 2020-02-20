@@ -3,8 +3,8 @@ set -euo pipefail
 
 function commit_summary() {
 
-    local FROM_COMMIT="$1"
-    local TO_COMMIT="$2"
+    local FROM="$1"
+    local TO="$2"
 
     # print out the commits that have been added
     git log --pretty=tformat:'`%h` %s' "$FROM".."$TO"
