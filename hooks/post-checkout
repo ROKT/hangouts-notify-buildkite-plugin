@@ -32,6 +32,7 @@ if [[ "${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_COMMIT_SUMMARY_ENABLED:-false}" =~ (tr
     SUMMARY_LOG=$(commit_summary "$BK_FROM_COMMIT" "$BK_TO_COMMIT")
 
     MESSAGE="${MESSAGE} ${SUMMARY_LOG}"
+    MESSAGE_ESCAPE_DOUBLEQUOTE=$(echo "$MESSAGE" | sed 's/"/\\"/g')
 fi
 
 CURRENT_COMMIT=$(git rev-parse HEAD)
@@ -80,12 +81,9 @@ if [ $TYPE == 'CARD' ]
   -d ' '"${HANGOUTS_CARD_JSON}"' '
 
 else
-  curl -v -X "POST" "${CHAT_URL}" \
-       -H 'Content-Type: application' \
-       -d $'{ "webhook": "'"${WEBHOOK_URL}"'",
-  "threadkey":"'"${THREAD_KEY}"'",
-  "message": "'"${MESSAGE}"'"
-  }
-  '
+    curl -v -X POST                             \
+     -H "Content-Type: application/json" \
+     --data $'{"text": "'"$MESSAGE_ESCAPE_DOUBLEQUOTE"'"}'                   \
+     "${WEBHOOK_URL}&threadKey=${THREAD_KEY}"
 
 fi
