@@ -7,6 +7,7 @@ function commit_summary() {
     local TO="$2"
 
     # print out the commits that have been added
+    git pull --tags
     git log --pretty=tformat:'`%h` %s' "$FROM".."$TO"
 
     # print out the commits that have been removed
