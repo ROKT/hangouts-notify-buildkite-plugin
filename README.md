@@ -91,6 +91,8 @@ For a deployment, it is most useful to use a tag representing your current relea
 commit-summary production HEAD
 ```
 
+When using the `commit-summary` script, it is up to you to ensure that you have pulled the tags into the local clone. This can be done by adding a `git pull --tags` in your `command` block, before using `commit-summary`.
+
 ## Tests
 
 The tests for this plugin can be run easily with `docker-compose`, like this:
