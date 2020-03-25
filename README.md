@@ -4,6 +4,12 @@
 
 A [Buildkite plugin](https://buildkite.com/docs/agent/v3/plugins) to send notifications from Buildkite to Google Hangouts
 
+## Note
+
+For the previous user who configured `type: "CARD"`, please note that `CARD` is redundant and won't be supported in the future. 
+
+`type: "KeyValueCARD"` should be used instead. Please refer following sections for more information.
+
 ## Example
 
 The following pipeline will send a message to a defined webhook in Google Chat. Note to generate Webhooks for Hangouts/Chat rooms refer to the following documentation: https://developers.google.com/hangouts/chat/quickstart/incoming-bot-python#step_1_register_the_incoming_webhook
@@ -162,7 +168,7 @@ steps:
   'usertoken-fail'
 
 - You will have to pass the 'TYPE' as card, if left empty or doesn't exist, the old way will be used
-  'type: 'CARD''
+  'type: 'KeyValueCARD''
 
 - Use the following for card title, subtitile and card openLink. Fields are separated by a comma
   'card-details: <title>, <subtitle, <build link>>'
