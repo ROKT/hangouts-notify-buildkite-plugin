@@ -6,7 +6,7 @@ A [Buildkite plugin](https://buildkite.com/docs/agent/v3/plugins) to send notifi
 
 ## Note
 
-For the previous user who configured `type: "CARD"`, please note that `CARD` is redundant and won't be supported in the future. 
+For the previous user who configured `type: "CARD"`, please note that `CARD` is obsolete and won't be supported in the future. 
 
 `type: "KeyValueCARD"` should be used instead. Please refer following sections for more information.
 
