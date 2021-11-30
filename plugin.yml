@@ -17,6 +17,8 @@ configuration:
       type: string
     rows:
       type: string
+    notify-fail-only:
+      type: string
     commit-summary:
       type: object
       properties:
@@ -28,5 +30,4 @@ configuration:
   required:
     - chat-endpoint
     - webhook-url
-    - message
   additionalProperties: false

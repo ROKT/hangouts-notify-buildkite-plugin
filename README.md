@@ -70,5 +70,7 @@ steps:
   OR
   'rows: <card1title>, <card1result>, <build1 link>; <card2title>, <card2result>, <build2 link>'
 
+  If you only want to send `FAILED` or `Timeout`rows in the `CARD` type of message, you can pass in the `fail-only: "true"` flag
+
 ### TODO:
 - Native Google Webhook Endpoint without proxy Endpoint (coming soon)

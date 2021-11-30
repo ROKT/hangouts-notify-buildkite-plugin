@@ -8,17 +8,17 @@ basedir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
 
 echo "--- Sending Hangouts Message"
 
-WEBHOOK_URL="${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_WEBHOOK_URL?}"
-CHAT_URL=${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_CHAT_ENDPOINT?}
-MESSAGE=$(echo "${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_MESSAGE?}" | envsubst)
-WEBHOOK_URL2="${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_WEBHOOK_URL2?}"
-WEBHOOK_KEY="${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_WEBHOOK_KEY?}"
-USERTOKEN_FAIL="${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_USERTOKEN_FAIL?}"
-USERTOKEN_PASS="${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_USERTOKEN_PASS?}"
-TYPE=${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_TYPE}
-CARD_DETAILS=${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_CARD_DETAILS}
-ROWS=$(echo "${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_ROWS?}" | envsubst)
-
+WEBHOOK_URL=${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_WEBHOOK_URL:-"no webhook set"}
+CHAT_URL=${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_CHAT_ENDPOINT:-"no chat url set"}
+MESSAGE=$(echo "${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_MESSAGE:-"no message set"}" | envsubst)
+WEBHOOK_URL2="${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_WEBHOOK_URL2:-"no webhook2 set"}"
+WEBHOOK_KEY="${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_WEBHOOK_KEY:-""}"
+USERTOKEN_FAIL="${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_USERTOKEN_FAIL:-""}"
+USERTOKEN_PASS="${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_USERTOKEN_PASS:-""}"
+TYPE=${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_TYPE:-""}
+CARD_DETAILS=${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_CARD_DETAILS:-""}
+ROWS=$(echo "${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_ROWS:-""}" | envsubst)
+ONLY_SHOW_FAILED=${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_FAIL_ONLY:-"false"}
 
 if [[ "${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_DEBUG:-false}" =~ (true|on|1) ]] ; then
   echo "--- :hammer: Enabling debug mode"
@@ -51,12 +51,16 @@ if [ $TYPE == 'CARD' ]
       IFS=, read -r ROW_TITLE ROW_INFO ROW_URL <<< "$i"
       if [ $ROW_INFO == "FAILED" ] || [ $ROW_INFO == "Timeout" ]; then FAIL=1; fi
       if [[ -z "$ROW_URL" ]] || [[ "${ROW_URL}" == "report not available" ]]; then ROW_URL=$BUILD_URL; fi
-      if [ $ROWS_JSON == "none" ]
-          then
-            ROWS_JSON='{ "keyValue":{ "topLabel":"'"$ROW_TITLE"'","content":"'"$ROW_INFO"'","button":{ "textButton":{ "text":"OPEN REPORT","onClick":{ "openLink":{ "url":"'"$ROW_URL"'"}}}}}}'
-          else
-            ROWS_JSON=$ROWS_JSON,'{ "keyValue":{ "topLabel":"'"$ROW_TITLE"'","content":"'"$ROW_INFO"'","button":{ "textButton":{ "text":"OPEN REPORT","onClick":{ "openLink":{ "url":"'"$ROW_URL"'"}}}}}}'
-          fi
+      if [ $ONLY_SHOW_FAILED == "true" ] && [ $ROW_INFO == "Passed" ] ; then
+        :
+      else
+        if [ $ROWS_JSON == "none" ]
+            then
+              ROWS_JSON='{ "keyValue":{ "topLabel":"'"$ROW_TITLE"'","content":"'"$ROW_INFO"'","button":{ "textButton":{ "text":"OPEN REPORT","onClick":{ "openLink":{ "url":"'"$ROW_URL"'"}}}}}}'
+            else
+              ROWS_JSON=$ROWS_JSON,'{ "keyValue":{ "topLabel":"'"$ROW_TITLE"'","content":"'"$ROW_INFO"'","button":{ "textButton":{ "text":"OPEN REPORT","onClick":{ "openLink":{ "url":"'"$ROW_URL"'"}}}}}}'
+            fi
+      fi
   done
 
   #Set the header icon
