@@ -71,7 +71,7 @@ if [ $TYPE == 'CARD' ]
     fi
 
   # Putting the JSON card together for hangouts
-  HANGOUTS_CARD_JSON='{"text": "'"$MESSAGE"'"cards":[{"header":{"title":"'"$CARD_TITLE"'","subtitle":"'"$CARD_SUBTITLE"'","imageUrl":"'"$HEADER_ICON"'"},"sections":[{"widgets":['"$ROWS_JSON"']},{"widgets":[{"buttons":[{"textButton":{"text":"GO TO BUILD","onClick":{"openLink":{"url":"'"$BUILD_URL"'"}}}}]}]}]}]}'
+  HANGOUTS_CARD_JSON='{"text": "'"$MESSAGE"'","cards":[{"header":{"title":"'"$CARD_TITLE"'","subtitle":"'"$CARD_SUBTITLE"'","imageUrl":"'"$HEADER_ICON"'"},"sections":[{"widgets":['"$ROWS_JSON"']},{"widgets":[{"buttons":[{"textButton":{"text":"GO TO BUILD","onClick":{"openLink":{"url":"'"$BUILD_URL"'"}}}}]}]}]}]}'
 
   #Create webhook url based of failed tests or not
   if [ $FAIL == 1 ]
