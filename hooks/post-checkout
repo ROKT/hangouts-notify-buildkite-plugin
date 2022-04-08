@@ -54,7 +54,7 @@ if [ $TYPE == 'CARD' ]
       if [ $ONLY_SHOW_FAILED == "true" ] && [ ! $ROW_INFO == "FAILED" -a ! $ROW_INFO == "Timeout" ] ; then
         :
       else
-        if [[ -z "$ROW_LINK_NAME" ]]; then ROW_LINK_NAME="OPEN REPORT";
+        if [[ -z "$ROW_LINK_NAME" ]]; then ROW_LINK_NAME="OPEN REPORT"; fi
         if [ $ROWS_JSON == "none" ]
             then
               ROWS_JSON='{ "keyValue":{ "topLabel":"'"$ROW_TITLE"'","content":"'"$ROW_INFO"'","button":{ "textButton":{ "text":"'"$ROW_LINK_NAME"'","onClick":{ "openLink":{ "url":"'"$ROW_URL"'"}}}}}}'
