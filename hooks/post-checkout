@@ -48,17 +48,18 @@ if [ $TYPE == 'CARD' ]
   # Create a list of JSON objects to display the rows in the hangouts card
   IFS=';' read -ra DETAILS <<< "$ROWS"
   for i in "${DETAILS[@]}"; do
-      IFS=, read -r ROW_TITLE ROW_INFO ROW_URL <<< "$i"
+      IFS=, read -r ROW_TITLE ROW_INFO ROW_URL ROW_LINK_NAME<<< "$i"
       if [ $ROW_INFO == "FAILED" ] || [ $ROW_INFO == "Timeout" ]; then FAIL=1; fi
       if [[ -z "$ROW_URL" ]] || [[ "${ROW_URL}" == "report not available" ]]; then ROW_URL=$BUILD_URL; fi
-      if [ $ONLY_SHOW_FAILED == "true" ] && [ $ROW_INFO == "Passed" ] ; then
+      if [ $ONLY_SHOW_FAILED == "true" ] && [ ! $ROW_INFO == "FAILED" -a ! $ROW_INFO == "Timeout" ] ; then
         :
       else
+        if [[ -z "$ROW_LINK_NAME" ]]; then ROW_LINK_NAME="OPEN REPORT";
         if [ $ROWS_JSON == "none" ]
             then
-              ROWS_JSON='{ "keyValue":{ "topLabel":"'"$ROW_TITLE"'","content":"'"$ROW_INFO"'","button":{ "textButton":{ "text":"OPEN REPORT","onClick":{ "openLink":{ "url":"'"$ROW_URL"'"}}}}}}'
+              ROWS_JSON='{ "keyValue":{ "topLabel":"'"$ROW_TITLE"'","content":"'"$ROW_INFO"'","button":{ "textButton":{ "text":"'"$ROW_LINK_NAME"'","onClick":{ "openLink":{ "url":"'"$ROW_URL"'"}}}}}}'
             else
-              ROWS_JSON=$ROWS_JSON,'{ "keyValue":{ "topLabel":"'"$ROW_TITLE"'","content":"'"$ROW_INFO"'","button":{ "textButton":{ "text":"OPEN REPORT","onClick":{ "openLink":{ "url":"'"$ROW_URL"'"}}}}}}'
+              ROWS_JSON=$ROWS_JSON,'{ "keyValue":{ "topLabel":"'"$ROW_TITLE"'","content":"'"$ROW_INFO"'","button":{ "textButton":{ "text":"'"$ROW_LINK_NAME"'","onClick":{ "openLink":{ "url":"'"$ROW_URL"'"}}}}}}'
             fi
       fi
   done
