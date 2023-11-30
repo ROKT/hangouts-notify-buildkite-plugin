@@ -40,7 +40,7 @@ THREAD_KEY=${BUILDKITE_PLUGIN_HANGOUTS_NOTIFY_THREAD_KEY:=$CURRENT_COMMIT}
 
 FAIL=0
 ROWS_JSON="none"
-if [[ "${TYPE}" == "CARD'" ]]
+if [[ "${TYPE}" == "CARD" ]]
   then
 
   IFS=, read -r CARD_TITLE CARD_SUBTITLE BUILD_URL <<< "$CARD_DETAILS"
@@ -66,13 +66,15 @@ if [[ "${TYPE}" == "CARD'" ]]
 
   #Set the header icon
   HEADER_ICON='https://roktcdn1.akamaized.net/bbw/success.png'
+  BUTTONS='{"textButton":{"text":"GO TO BUILD","onClick":{"openLink":{"url":"'"$BUILD_URL"'"}}}}'
   if [ $FAIL == 1 ]
     then
       HEADER_ICON='https://roktcdn1.akamaized.net/bbw/failure.png'
+      BUTTONS=''"$BUTTONS"',{"textButton":{"text":"GO TO RUNBOOK","onClick":{"openLink":{"url":"https://github.com/ROKT/rokt-end-to-end-testing/blob/master/docs/runbook.md"}}}}'
     fi
 
   # Putting the JSON card together for hangouts
-  HANGOUTS_CARD_JSON='{"text": "'"$MESSAGE"'","cards":[{"header":{"title":"'"$CARD_TITLE"'","subtitle":"'"$CARD_SUBTITLE"'","imageUrl":"'"$HEADER_ICON"'"},"sections":[{"widgets":['"$ROWS_JSON"']},{"widgets":[{"buttons":[{"textButton":{"text":"GO TO BUILD","onClick":{"openLink":{"url":"'"$BUILD_URL"'"}}}}]}]}]}]}'
+  HANGOUTS_CARD_JSON='{"text": "'"$MESSAGE"'","cards":[{"header":{"title":"'"$CARD_TITLE"'","subtitle":"'"$CARD_SUBTITLE"'","imageUrl":"'"$HEADER_ICON"'"},"sections":[{"widgets":['"$ROWS_JSON"']},{"widgets":[{"buttons":['"$BUTTONS"']}]}]}]}'
 
   #Create webhook url based of failed tests or not
   if [ $FAIL == 1 ]
