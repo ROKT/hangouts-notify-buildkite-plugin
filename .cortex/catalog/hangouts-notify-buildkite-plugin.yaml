@@ -17,4 +17,4 @@ info:
   x-cortex-oncall:
     opsgenie:
       type: SCHEDULE
-      id: Rokt Global Infrastructure Build and Release_schedule
+      id: 'Rokt Global Infrastructure Build and Release_schedule'
