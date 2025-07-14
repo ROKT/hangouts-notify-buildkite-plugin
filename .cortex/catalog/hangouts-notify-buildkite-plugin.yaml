@@ -1,21 +1,20 @@
 openapi: 3.0.0
 info:
-  title: "Hangouts Notify Buildkite Plugin"
-  x-cortex-tag: "hangouts-notify-buildkite-plugin"
+  title: Hangouts Notify Buildkite Plugin
+  x-cortex-tag: hangouts-notify-buildkite-plugin
   x-cortex-type: infra
-  description: |
-    A Buildkite plugin to send notifications from Buildkite to Google Hangouts
+  description: 'A Buildkite plugin to send notifications from Buildkite to Google Hangouts'
   x-cortex-git:
     github:
-      repository: "ROKT/hangouts-notify-buildkite-plugin"
-      basepath: "hangouts-notify-buildkite-plugin"
+      repository: ROKT/hangouts-notify-buildkite-plugin
   x-cortex-owners:
-    - type: group
-      name: "rokt-global-infrastructure"
-      provider: CORTEX
+  - type: group
+    name: rokt-global-infrastructure
+    provider: CORTEX
   x-cortex-groups:
-    - "lang-shell"
+    - lang-shell
+    - "serviceTier-3"
   x-cortex-oncall:
     opsgenie:
       type: SCHEDULE
-      id: "Rokt Global Infrastructure Build and Release_schedule"
+      id: 'Rokt Global Infrastructure Build and Release_schedule'
